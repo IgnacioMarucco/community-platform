@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Base entity class that provides common auditing fields for all entities.
@@ -27,6 +29,8 @@ import lombok.Data;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@SuperBuilder
+@NoArgsConstructor
 public abstract class BaseEntity {
     
     @Id
