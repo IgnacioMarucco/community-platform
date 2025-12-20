@@ -22,6 +22,8 @@ public final class ValidationConstants {
 
     // Password constraints
     public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$";
+    public static final String PASSWORD_PATTERN_MESSAGE = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&#)";
 
     // Name constraints
     public static final int NAME_MAX_LENGTH = 50;
@@ -41,6 +43,7 @@ public final class ValidationConstants {
 
     public static final String PASSWORD_REQUIRED = "Password is required";
     public static final String PASSWORD_SIZE = "Password must be at least " + PASSWORD_MIN_LENGTH + " characters";
+    public static final String PASSWORD_WEAK = PASSWORD_PATTERN_MESSAGE;
 
     public static final String FIRST_NAME_SIZE = "First name must not exceed " + NAME_MAX_LENGTH + " characters";
     public static final String LAST_NAME_SIZE = "Last name must not exceed " + NAME_MAX_LENGTH + " characters";

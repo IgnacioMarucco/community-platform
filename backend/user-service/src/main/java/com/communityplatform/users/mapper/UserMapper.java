@@ -24,6 +24,7 @@ public interface UserMapper {
     /**
      * Convert UserEntity to UserResponseDto.
      * Maps all fields including audit fields from BaseEntity.
+     * Roles are not included in UserResponseDto (no target field).
      */
     UserResponseDto toResponseDto(UserEntity entity);
 
@@ -35,6 +36,7 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "roles", ignore = true)
     UserEntity toEntity(UserCreateDto createDto);
 
     /**
@@ -48,6 +50,8 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "password", ignore = true)
     void updateEntity(@MappingTarget UserEntity entity, UserUpdateDto updateDto);
 
     /**

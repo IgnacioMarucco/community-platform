@@ -2,6 +2,7 @@ package com.communityplatform.users.service;
 
 import java.util.List;
 
+import com.communityplatform.users.dto.user.ChangePasswordDto;
 import com.communityplatform.users.dto.user.UserCreateDto;
 import com.communityplatform.users.dto.user.UserResponseDto;
 import com.communityplatform.users.dto.user.UserUpdateDto;
@@ -54,4 +55,15 @@ public interface UserService {
      * @throws UserNotFoundException if user not found or already deleted
      */
     void deleteUser(Long userId);
+    
+    /**
+     * Change user password.
+     * Validates current password before allowing change.
+     * 
+     * @param userId user ID
+     * @param changePasswordDto current and new password data
+     * @throws UserNotFoundException if user not found or deleted
+     * @throws BadCredentialsException if current password is incorrect
+     */
+    void changePassword(Long userId, ChangePasswordDto changePasswordDto);
 }

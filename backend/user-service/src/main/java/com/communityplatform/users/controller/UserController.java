@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.communityplatform.users.dto.user.ChangePasswordDto;
 import com.communityplatform.users.dto.user.UserCreateDto;
 import com.communityplatform.users.dto.user.UserResponseDto;
 import com.communityplatform.users.dto.user.UserUpdateDto;
@@ -135,6 +136,30 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         log.info("DELETE /api/v1/users/{} - Deleting user", id);
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    /**
+     * Change user password.
+     * POST /api/v1/users/{id}/change-password
+     * 
+     * @param id user ID
+     * @param changePasswordDto password change data (validated)
+     * @return 204 NO CONTENT
+     */
+    @Operation(summary = "Change password", description = "Changes a user's password after verifying current password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Current password is incorrect"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PostMapping("/{id}/change-password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody ChangePasswordDto changePasswordDto) {
+        log.info("POST /api/v1/users/{}/change-password - Changing password", id);
+        userService.changePassword(id, changePasswordDto);
         return ResponseEntity.noContent().build();
     }
 }
