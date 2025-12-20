@@ -145,6 +145,10 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         log.info("Soft deleting user with id: {}", userId);
 
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+
         UserEntity entity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
