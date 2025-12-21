@@ -38,128 +38,191 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Users", description = "User management APIs")
 public class UserController {
 
-    private final UserService userService;
+        private final UserService userService;
 
-    /**
-     * Create a new user.
-     * POST /api/v1/users
-     * 
-     * @param createDto user creation data (validated)
-     * @return 201 CREATED with user data
-     */
-    @Operation(summary = "Create a new user", description = "Creates a new user account with the provided information")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "409", description = "User with username or email already exists")
-    })
-    @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto createDto) {
-        log.info("POST /api/v1/users - Creating user with username: {}", createDto.getUsername());
-        UserResponseDto response = userService.createUser(createDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+        /**
+         * Create a new user.
+         * POST /api/v1/users
+         * 
+         * @param createDto user creation data (validated)
+         * @return 201 CREATED with user data
+         */
+        @Operation(summary = "Create a new user", description = "Creates a new user account with the provided information")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "User created successfully"),
+                        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+                        @ApiResponse(responseCode = "409", description = "User with username or email already exists")
+        })
+        @PostMapping
+        public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto createDto) {
+                log.info("POST /api/v1/users - Creating user with username: {}", createDto.getUsername());
+                UserResponseDto response = userService.createUser(createDto);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
 
-    /**
-     * Get user by ID.
-     * GET /api/v1/users/{id}
-     * 
-     * @param id user ID
-     * @return 200 OK with user data
-     */
-    @Operation(summary = "Get user by ID", description = "Retrieves a user by their unique identifier")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User found successfully"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
-        log.info("GET /api/v1/users/{} - Fetching user", id);
-        UserResponseDto response = userService.getUserById(id);
-        return ResponseEntity.ok(response);
-    }
+        /**
+         * Get user by ID.
+         * GET /api/v1/users/{id}
+         * 
+         * @param id user ID
+         * @return 200 OK with user data
+         */
+        @Operation(summary = "Get user by ID", description = "Retrieves a user by their unique identifier")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "User found successfully"),
+                        @ApiResponse(responseCode = "404", description = "User not found")
+        })
+        @GetMapping("/{id}")
+        public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+                log.info("GET /api/v1/users/{} - Fetching user", id);
+                UserResponseDto response = userService.getUserById(id);
+                return ResponseEntity.ok(response);
+        }
 
-    /**
-     * Get all active users.
-     * GET /api/v1/users
-     * 
-     * @return 200 OK with list of users
-     */
-    @Operation(summary = "Get all users", description = "Retrieves a list of all active users")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
-    })
-    @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        log.info("GET /api/v1/users - Fetching all users");
-        List<UserResponseDto> response = userService.getAllUsers();
-        return ResponseEntity.ok(response);
-    }
+        /**
+         * Get all active users.
+         * GET /api/v1/users
+         * 
+         * @return 200 OK with list of users
+         */
+        @Operation(summary = "Get all users", description = "Retrieves a list of all active users")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
+        })
+        @GetMapping
+        public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+                log.info("GET /api/v1/users - Fetching all users");
+                List<UserResponseDto> response = userService.getAllUsers();
+                return ResponseEntity.ok(response);
+        }
 
-    /**
-     * Update an existing user.
-     * PUT /api/v1/users/{id}
-     * 
-     * @param id        user ID
-     * @param updateDto user update data (validated)
-     * @return 200 OK with updated user data
-     */
-    @Operation(summary = "Update user", description = "Updates an existing user's information")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "409", description = "Username or email already exists")
-    })
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(
-            @PathVariable Long id,
-            @Valid @RequestBody UserUpdateDto updateDto) {
-        log.info("PUT /api/v1/users/{} - Updating user", id);
-        UserResponseDto response = userService.updateUser(id, updateDto);
-        return ResponseEntity.ok(response);
-    }
+        /**
+         * Update an existing user.
+         * PUT /api/v1/users/{id}
+         * 
+         * @param id        user ID
+         * @param updateDto user update data (validated)
+         * @return 200 OK with updated user data
+         */
+        @Operation(summary = "Update user", description = "Updates an existing user's information")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "User updated successfully"),
+                        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+                        @ApiResponse(responseCode = "404", description = "User not found"),
+                        @ApiResponse(responseCode = "409", description = "Username or email already exists")
+        })
+        @PutMapping("/{id}")
+        public ResponseEntity<UserResponseDto> updateUser(
+                        @PathVariable Long id,
+                        @Valid @RequestBody UserUpdateDto updateDto) {
+                log.info("PUT /api/v1/users/{} - Updating user", id);
+                UserResponseDto response = userService.updateUser(id, updateDto);
+                return ResponseEntity.ok(response);
+        }
 
-    /**
-     * Soft delete a user.
-     * DELETE /api/v1/users/{id}
-     * 
-     * @param id user ID
-     * @return 204 NO CONTENT
-     */
-    @Operation(summary = "Delete user", description = "Soft deletes a user (marks as inactive)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "User deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        log.info("DELETE /api/v1/users/{} - Deleting user", id);
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-    
-    /**
-     * Change user password.
-     * POST /api/v1/users/{id}/change-password
-     * 
-     * @param id user ID
-     * @param changePasswordDto password change data (validated)
-     * @return 204 NO CONTENT
-     */
-    @Operation(summary = "Change password", description = "Changes a user's password after verifying current password")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Password changed successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Current password is incorrect"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @PostMapping("/{id}/change-password")
-    public ResponseEntity<Void> changePassword(
-            @PathVariable Long id,
-            @Valid @RequestBody ChangePasswordDto changePasswordDto) {
-        log.info("POST /api/v1/users/{}/change-password - Changing password", id);
-        userService.changePassword(id, changePasswordDto);
-        return ResponseEntity.noContent().build();
-    }
+        /**
+         * Soft delete a user.
+         * DELETE /api/v1/users/{id}
+         * 
+         * @param id user ID
+         * @return 204 NO CONTENT
+         */
+        @Operation(summary = "Delete user", description = "Soft deletes a user (marks as inactive)")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "204", description = "User deleted successfully"),
+                        @ApiResponse(responseCode = "404", description = "User not found")
+        })
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+                log.info("DELETE /api/v1/users/{} - Deleting user", id);
+                userService.deleteUser(id);
+                return ResponseEntity.noContent().build();
+        }
+
+        /**
+         * Change user password.
+         * POST /api/v1/users/{id}/change-password
+         * 
+         * @param id                user ID
+         * @param changePasswordDto password change data (validated)
+         * @return 204 NO CONTENT
+         */
+        @Operation(summary = "Change password", description = "Changes a user's password after verifying current password")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "204", description = "Password changed successfully"),
+                        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+                        @ApiResponse(responseCode = "401", description = "Current password is incorrect"),
+                        @ApiResponse(responseCode = "404", description = "User not found")
+        })
+        @PostMapping("/{id}/change-password")
+        public ResponseEntity<Void> changePassword(
+                        @PathVariable Long id,
+                        @Valid @RequestBody ChangePasswordDto changePasswordDto) {
+                log.info("POST /api/v1/users/{}/change-password - Changing password", id);
+                userService.changePassword(id, changePasswordDto);
+                return ResponseEntity.noContent().build();
+        }
+
+        /**
+         * Get current authenticated user.
+         * GET /api/v1/users/me
+         * 
+         * @return 200 OK with current user data
+         */
+        @Operation(summary = "Get current user", description = "Retrieves the profile of the currently authenticated user")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Current user retrieved successfully"),
+                        @ApiResponse(responseCode = "401", description = "Not authenticated"),
+                        @ApiResponse(responseCode = "404", description = "User not found")
+        })
+        @GetMapping("/me")
+        public ResponseEntity<UserResponseDto> getCurrentUser(
+                        @org.springframework.web.bind.annotation.RequestHeader("X-Username") String username) {
+                log.info("GET /api/v1/users/me - Fetching current user: {}", username);
+                UserResponseDto response = userService.getCurrentUser(username);
+                return ResponseEntity.ok(response);
+        }
+
+        /**
+         * Update current authenticated user's profile.
+         * PUT /api/v1/users/me
+         * 
+         * @param updateDto user update data (validated)
+         * @return 200 OK with updated user data
+         */
+        @Operation(summary = "Update current user", description = "Updates the profile of the currently authenticated user")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Current user updated successfully"),
+                        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+                        @ApiResponse(responseCode = "401", description = "Not authenticated"),
+                        @ApiResponse(responseCode = "404", description = "User not found"),
+                        @ApiResponse(responseCode = "409", description = "Email already exists")
+        })
+        @PutMapping("/me")
+        public ResponseEntity<UserResponseDto> updateCurrentUser(
+                        @org.springframework.web.bind.annotation.RequestHeader("X-Username") String username,
+                        @Valid @RequestBody UserUpdateDto updateDto) {
+                log.info("PUT /api/v1/users/me - Updating current user: {}", username);
+                UserResponseDto response = userService.updateCurrentUser(username, updateDto);
+                return ResponseEntity.ok(response);
+        }
+
+        /**
+         * Get user by username.
+         * GET /api/v1/users/username/{username}
+         * 
+         * @param username user's username
+         * @return 200 OK with user data
+         */
+        @Operation(summary = "Get user by username", description = "Retrieves a user by their username")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "User found successfully"),
+                        @ApiResponse(responseCode = "404", description = "User not found")
+        })
+        @GetMapping("/username/{username}")
+        public ResponseEntity<UserResponseDto> getUserByUsername(@PathVariable String username) {
+                log.info("GET /api/v1/users/username/{} - Fetching user", username);
+                UserResponseDto response = userService.getUserByUsername(username);
+                return ResponseEntity.ok(response);
+        }
 }

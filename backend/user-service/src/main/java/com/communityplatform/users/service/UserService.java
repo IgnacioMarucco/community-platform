@@ -55,15 +55,44 @@ public interface UserService {
      * @throws UserNotFoundException if user not found or already deleted
      */
     void deleteUser(Long userId);
-    
+
     /**
      * Change user password.
      * Validates current password before allowing change.
      * 
-     * @param userId user ID
+     * @param userId            user ID
      * @param changePasswordDto current and new password data
-     * @throws UserNotFoundException if user not found or deleted
+     * @throws UserNotFoundException   if user not found or deleted
      * @throws BadCredentialsException if current password is incorrect
      */
     void changePassword(Long userId, ChangePasswordDto changePasswordDto);
+
+    /**
+     * Get currently authenticated user.
+     * 
+     * @param username authenticated username from security context
+     * @return user response
+     * @throws UserNotFoundException if user not found or deleted
+     */
+    UserResponseDto getCurrentUser(String username);
+
+    /**
+     * Get user by username.
+     * 
+     * @param username user's username
+     * @return user response
+     * @throws UserNotFoundException if user not found or deleted
+     */
+    UserResponseDto getUserByUsername(String username);
+
+    /**
+     * Update currently authenticated user's profile.
+     * 
+     * @param username  authenticated username from security context
+     * @param updateDto user update data
+     * @return updated user response
+     * @throws UserNotFoundException  if user not found or deleted
+     * @throws DuplicateUserException if email already exists
+     */
+    UserResponseDto updateCurrentUser(String username, UserUpdateDto updateDto);
 }

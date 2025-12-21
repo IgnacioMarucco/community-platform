@@ -26,15 +26,18 @@ import lombok.RequiredArgsConstructor;
 /**
  * Spring Security configuration for JWT-based authentication.
  * 
+ * MODIFIED FOR API GATEWAY:
+ * When behind an API Gateway, the gateway handles JWT validation
+ * and injects X-User-Id header. This config permits all requests
+ * and relies on the gateway for authentication.
+ * 
  * Configures:
- * - Stateless session management
- * - Public and protected endpoints
- * - JWT filter integration
- * - Password encoding
+ * - Disabled authentication (handled by gateway)
+ * - Public access to all endpoints
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+// @EnableMethodSecurity // Disabled: API Gateway handles authorization
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -45,6 +48,7 @@ public class SecurityConfig {
 
     /**
      * Configure the security filter chain.
+     * API Gateway handles authentication, so we permit all requests here.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -52,39 +56,12 @@ public class SecurityConfig {
                 // Disable CSRF for stateless API
                 .csrf(csrf -> csrf.disable())
 
-                // Exception handling
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler))
-
-                // Stateless session management
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // Configure endpoint authorization
-                .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-
-                        // Swagger/OpenAPI
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers("/api-docs/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-
-                        // H2 Console (development only)
-                        .requestMatchers("/h2-console/**").permitAll()
-
-                        // All other endpoints require authentication
-                        .anyRequest().authenticated())
+                // Disable authentication - API Gateway handles it
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 
                 // Allow H2 console iframe
                 .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.sameOrigin()))
-
-                // Add JWT filter before UsernamePasswordAuthenticationFilter
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }

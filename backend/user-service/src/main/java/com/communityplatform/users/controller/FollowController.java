@@ -3,18 +3,18 @@ package com.communityplatform.users.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.communityplatform.users.dto.follow.FollowCountDto;
 import com.communityplatform.users.dto.follow.FollowResponseDto;
 import com.communityplatform.users.dto.user.UserSummaryDto;
-import com.communityplatform.users.entity.UserEntity;
+import com.communityplatform.users.exception.BadCredentialsException;
 import com.communityplatform.users.exception.UserNotFoundException;
 import com.communityplatform.users.repository.UserRepository;
 import com.communityplatform.users.service.FollowService;
@@ -54,12 +54,13 @@ public class FollowController {
             @ApiResponse(responseCode = "409", description = "Already following this user")
     })
     @PostMapping("/{userId}/follow")
-    public ResponseEntity<Void> followUser(@PathVariable Long userId) {
-        Long authenticatedUserId = getAuthenticatedUserId();
+    public ResponseEntity<Void> followUser(@PathVariable Long userId,
+            @RequestHeader("X-User-Id") Long authenticatedUserId) {
+        Long resolvedUserId = requireAuthenticatedUserId(authenticatedUserId);
         log.info("POST /api/v1/users/{}/follow - User {} following user {}",
-                userId, authenticatedUserId, userId);
+                userId, resolvedUserId, userId);
 
-        followService.followUser(authenticatedUserId, userId);
+        followService.followUser(resolvedUserId, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,12 +76,13 @@ public class FollowController {
             @ApiResponse(responseCode = "404", description = "Not following this user")
     })
     @DeleteMapping("/{userId}/follow")
-    public ResponseEntity<Void> unfollowUser(@PathVariable Long userId) {
-        Long authenticatedUserId = getAuthenticatedUserId();
+    public ResponseEntity<Void> unfollowUser(@PathVariable Long userId,
+            @RequestHeader("X-User-Id") Long authenticatedUserId) {
+        Long resolvedUserId = requireAuthenticatedUserId(authenticatedUserId);
         log.info("DELETE /api/v1/users/{}/follow - User {} unfollowing user {}",
-                userId, authenticatedUserId, userId);
+                userId, resolvedUserId, userId);
 
-        followService.unfollowUser(authenticatedUserId, userId);
+        followService.unfollowUser(resolvedUserId, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -123,12 +125,13 @@ public class FollowController {
             @ApiResponse(responseCode = "200", description = "Follow status retrieved successfully")
     })
     @GetMapping("/{userId}/follow/check")
-    public ResponseEntity<FollowResponseDto> isFollowing(@PathVariable Long userId) {
-        Long authenticatedUserId = getAuthenticatedUserId();
+    public ResponseEntity<FollowResponseDto> isFollowing(@PathVariable Long userId,
+            @RequestHeader("X-User-Id") Long authenticatedUserId) {
+        Long resolvedUserId = requireAuthenticatedUserId(authenticatedUserId);
         log.info("GET /api/v1/users/{}/follow/check - User {} checking follow status",
-                userId, authenticatedUserId);
+                userId, resolvedUserId);
 
-        FollowResponseDto response = followService.isFollowing(authenticatedUserId, userId);
+        FollowResponseDto response = followService.isFollowing(resolvedUserId, userId);
         return ResponseEntity.ok(response);
     }
 
@@ -168,10 +171,13 @@ public class FollowController {
      * @return user ID
      * @throws UserNotFoundException if user not found
      */
-    private Long getAuthenticatedUserId() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found: " + username));
-        return user.getId();
+    private Long requireAuthenticatedUserId(Long authenticatedUserId) {
+        if (authenticatedUserId == null) {
+            throw new BadCredentialsException("Missing authenticated user id");
+        }
+        if (!userRepository.existsById(authenticatedUserId)) {
+            throw new UserNotFoundException("Authenticated user not found: " + authenticatedUserId);
+        }
+        return authenticatedUserId;
     }
 }

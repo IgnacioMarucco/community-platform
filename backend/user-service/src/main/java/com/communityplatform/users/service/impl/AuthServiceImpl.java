@@ -105,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Generate tokens
-        String accessToken = jwtTokenProvider.generateAccessToken(savedUser.getUsername());
+        String accessToken = jwtTokenProvider.generateAccessToken(savedUser.getId(), savedUser.getUsername());
         RefreshTokenEntity refreshToken = createRefreshToken(savedUser);
 
         return buildAuthResponse(accessToken, refreshToken.getToken(), savedUser);
@@ -135,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.revokeAllByUser(user);
 
         // Generate tokens
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getUsername());
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getUsername());
         RefreshTokenEntity refreshToken = createRefreshToken(user);
 
         log.info("User logged in successfully: {}", user.getUsername());
@@ -169,7 +169,7 @@ public class AuthServiceImpl implements AuthService {
         RefreshTokenEntity newRefreshToken = createRefreshToken(user);
 
         // Generate new access token
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getUsername());
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getUsername());
         log.info("Access token refreshed for user: {}", user.getUsername());
 
         return buildAuthResponse(accessToken, newRefreshToken.getToken(), user);

@@ -57,12 +57,13 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Generate an access token for a given username.
+     * Generate an access token for a user.
      * 
-     * @param username the username to include in the token
+     * @param userId   stable user identifier for the subject claim
+     * @param username username claim for downstream services
      * @return JWT access token string
      */
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(Long userId, String username) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtProperties.getAccessTokenExpirationMs());
 
@@ -70,9 +71,10 @@ public class JwtTokenProvider {
                 .id(UUID.randomUUID().toString())
                 .issuer(jwtProperties.getIssuer())
                 .audience().add(jwtProperties.getAudience()).and()
-                .subject(username)
+                .subject(String.valueOf(userId))
                 .issuedAt(now)
                 .expiration(expiryDate)
+                .claim("username", username)
                 .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
                 .signWith(getSigningKey())
                 .compact();
@@ -82,11 +84,11 @@ public class JwtTokenProvider {
      * Extract the username from a JWT token.
      * 
      * @param token the JWT token
-     * @return the username from the token's subject claim
+     * @return the username from the token's username claim
      */
     public String getUsernameFromToken(String token) {
         Claims claims = parseAndValidateClaims(token);
-        return claims.getSubject();
+        return claims.get("username", String.class);
     }
 
     /**
@@ -124,8 +126,19 @@ public class JwtTokenProvider {
             throw new JwtException("Token type is missing");
         }
 
-        if (claims.getSubject() == null || claims.getSubject().isBlank()) {
+        String subject = claims.getSubject();
+        if (subject == null || subject.isBlank()) {
             throw new JwtException("Subject is required");
+        }
+        try {
+            Long.parseLong(subject);
+        } catch (NumberFormatException ex) {
+            throw new JwtException("Subject must be a user id");
+        }
+
+        String username = claims.get("username", String.class);
+        if (username == null || username.isBlank()) {
+            throw new JwtException("Username claim is required");
         }
 
         return claims;

@@ -49,10 +49,10 @@ public class UserServiceImpl implements UserService {
 
         // Convert DTO to Entity
         UserEntity entity = userMapper.toEntity(createDto);
-        
+
         // Encrypt password before saving
         entity.setPassword(passwordEncoder.encode(createDto.getPassword()));
-        
+
         // Save with proper exception handling for race conditions
         try {
             UserEntity savedEntity = userRepository.save(entity);
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
 
         // Update entity (MapStruct will only update non-null fields)
         userMapper.updateEntity(entity, updateDto);
-        
+
         // Save with proper exception handling for race conditions
         try {
             UserEntity updatedEntity = userRepository.save(entity);
@@ -163,29 +163,110 @@ public class UserServiceImpl implements UserService {
 
         log.info("User soft deleted successfully with id: {}", userId);
     }
-    
+
     @Override
     public void changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         log.info("Changing password for user with id: {}", userId);
-        
+
         UserEntity entity = userRepository.findByIdWithRoles(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-        
+
         // Check if user is soft deleted
         if (!entity.isActive()) {
             throw new UserNotFoundException("User with id " + userId + " has been deleted");
         }
-        
+
         // Verify current password
         if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), entity.getPassword())) {
             log.warn("Invalid current password provided for user id: {}", userId);
             throw new BadCredentialsException("Current password is incorrect");
         }
-        
+
         // Encrypt and set new password
         entity.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         userRepository.save(entity);
-        
+
         log.info("Password changed successfully for user with id: {}", userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDto getCurrentUser(String username) {
+        log.info("Fetching current authenticated user: {}", username);
+
+        UserEntity entity = userRepository.findByUsernameWithRoles(username)
+                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found: " + username));
+
+        // Check if user is soft deleted
+        if (!entity.isActive()) {
+            throw new UserNotFoundException("User " + username + " has been deleted");
+        }
+
+        return userMapper.toResponseDto(entity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserByUsername(String username) {
+        log.info("Fetching user with username: {}", username);
+
+        UserEntity entity = userRepository.findByUsernameWithRoles(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+
+        // Check if user is soft deleted
+        if (!entity.isActive()) {
+            throw new UserNotFoundException("User with username " + username + " has been deleted");
+        }
+
+        return userMapper.toResponseDto(entity);
+    }
+
+    @Override
+    public UserResponseDto updateCurrentUser(String username, UserUpdateDto updateDto) {
+        log.info("Updating current authenticated user: {}", username);
+
+        UserEntity entity = userRepository.findByUsernameWithRoles(username)
+                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found: " + username));
+
+        // Check if user is soft deleted
+        if (!entity.isActive()) {
+            throw new UserNotFoundException("User " + username + " has been deleted");
+        }
+
+        // Check email uniqueness if being updated (username cannot be changed)
+        if (updateDto.getEmail() != null &&
+                !updateDto.getEmail().equals(entity.getEmail()) &&
+                userRepository.existsByEmail(updateDto.getEmail())) {
+            throw new DuplicateUserException("email", updateDto.getEmail());
+        }
+
+        // Update only allowed fields (excluding username for current user updates)
+        if (updateDto.getFirstName() != null) {
+            entity.setFirstName(updateDto.getFirstName());
+        }
+        if (updateDto.getLastName() != null) {
+            entity.setLastName(updateDto.getLastName());
+        }
+        if (updateDto.getEmail() != null) {
+            entity.setEmail(updateDto.getEmail());
+        }
+        if (updateDto.getBio() != null) {
+            entity.setBio(updateDto.getBio());
+        }
+        if (updateDto.getProfilePictureUrl() != null) {
+            entity.setProfilePictureUrl(updateDto.getProfilePictureUrl());
+        }
+        // Save with proper exception handling
+        try {
+            UserEntity updatedEntity = userRepository.save(entity);
+            log.info("Current user updated successfully: {}", username);
+            return userMapper.toResponseDto(updatedEntity);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            log.error("Data integrity violation while updating current user: {}", ex.getMessage());
+            if (ex.getMessage().contains("email")) {
+                throw new DuplicateUserException("email", updateDto.getEmail());
+            }
+            throw ex;
+        }
     }
 }
