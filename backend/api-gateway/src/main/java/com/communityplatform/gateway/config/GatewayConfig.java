@@ -49,7 +49,7 @@ public class GatewayConfig {
 
                                 // Content service endpoints (protected)
                                 .route("content", r -> r
-                                                .path("/api/v1/posts/**", "/api/v1/comments/**")
+                                                .path("/api/v1/posts/**", "/api/v1/comments/**", "/api/v1/media/**")
                                                 .filters(f -> f.filter(jwtAuthFilter
                                                                 .apply(new JwtAuthenticationFilter.Config())))
                                                 .uri(contentServiceUrl))

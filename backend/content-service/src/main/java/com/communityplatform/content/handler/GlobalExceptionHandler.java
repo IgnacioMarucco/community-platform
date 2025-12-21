@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.communityplatform.content.exception.CommentNotFoundException;
 import com.communityplatform.content.exception.InvalidLikeException;
+import com.communityplatform.content.exception.InvalidMediaException;
+import com.communityplatform.content.exception.MediaNotFoundException;
+import com.communityplatform.content.exception.MediaStorageException;
 import com.communityplatform.content.exception.PostNotFoundException;
 import com.communityplatform.content.exception.UnauthorizedOperationException;
 
@@ -63,6 +66,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle MediaNotFoundException (404 NOT FOUND).
+     */
+    @ExceptionHandler(MediaNotFoundException.class)
+    public ProblemDetail handleMediaNotFound(MediaNotFoundException ex, HttpServletRequest request) {
+        log.error("Media not found: {}", ex.getMessage());
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage());
+        problem.setTitle("Media Not Found");
+        problem.setProperty("timestamp", LocalDateTime.now());
+        problem.setProperty("path", request.getRequestURI());
+
+        return problem;
+    }
+
+    /**
      * Handle UnauthorizedOperationException (403 FORBIDDEN).
      */
     @ExceptionHandler(UnauthorizedOperationException.class)
@@ -73,6 +93,40 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN,
                 ex.getMessage());
         problem.setTitle("Unauthorized Operation");
+        problem.setProperty("timestamp", LocalDateTime.now());
+        problem.setProperty("path", request.getRequestURI());
+
+        return problem;
+    }
+
+    /**
+     * Handle InvalidMediaException (400 BAD REQUEST).
+     */
+    @ExceptionHandler(InvalidMediaException.class)
+    public ProblemDetail handleInvalidMedia(InvalidMediaException ex, HttpServletRequest request) {
+        log.error("Invalid media: {}", ex.getMessage());
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage());
+        problem.setTitle("Invalid Media");
+        problem.setProperty("timestamp", LocalDateTime.now());
+        problem.setProperty("path", request.getRequestURI());
+
+        return problem;
+    }
+
+    /**
+     * Handle MediaStorageException (500 INTERNAL SERVER ERROR).
+     */
+    @ExceptionHandler(MediaStorageException.class)
+    public ProblemDetail handleMediaStorage(MediaStorageException ex, HttpServletRequest request) {
+        log.error("Media storage error: {}", ex.getMessage());
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Media storage error");
+        problem.setTitle("Media Storage Error");
         problem.setProperty("timestamp", LocalDateTime.now());
         problem.setProperty("path", request.getRequestURI());
 
