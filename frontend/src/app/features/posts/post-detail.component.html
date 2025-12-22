@@ -24,24 +24,26 @@
           </div>
         }
 
-        <div class="post-actions">
-          <button class="btn" type="button" (click)="togglePostLike()">
-            @if (post()?.likedByCurrentUser) {
-              <span>Unlike</span>
-            } @else {
-              <span>Like</span>
-            }
-          </button>
-          <span class="pixel-badge">Likes: {{ post()?.likeCount }}</span>
-          <span class="pixel-badge">Comments: {{ post()?.commentCount }}</span>
-        </div>
-
-        @if (canEdit()) {
-          <div class="edit-actions">
-            <button class="btn secondary" type="button" (click)="toggleEdit()">Edit</button>
-            <button class="btn danger" type="button" (click)="deletePost()">Delete</button>
+        <div class="post-footer">
+          <div class="post-stats">
+            <button class="btn" type="button" (click)="togglePostLike()">
+              @if (post()?.likedByCurrentUser) {
+                <span>Unlike</span>
+              } @else {
+                <span>Like</span>
+              }
+            </button>
+            <span class="pixel-badge">Likes: {{ post()?.likeCount }}</span>
+            <span class="pixel-badge">Comments: {{ post()?.commentCount }}</span>
           </div>
-        }
+
+          @if (canEdit()) {
+            <div class="post-edit-actions">
+              <button class="btn secondary" type="button" (click)="toggleEdit()">Edit</button>
+              <button class="btn danger" type="button" (click)="deletePost()">Delete</button>
+            </div>
+          }
+        </div>
 
         @if (editing()) {
           <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveEdit()">
@@ -59,14 +61,6 @@
       </article>
     }
   }
-
-  <section class="pixel-card comment-box">
-    <h3 class="section-title">Add comment</h3>
-    <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
-      <textarea rows="3" formControlName="content"></textarea>
-      <button class="btn" type="submit">Comment</button>
-    </form>
-  </section>
 
   <section class="comments">
     @if (!comments().length) {
@@ -95,6 +89,14 @@
         </div>
       }
     }
+  </section>
+
+  <section class="pixel-card comment-box">
+    <h3 class="section-title">Add comment</h3>
+    <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+      <textarea rows="3" formControlName="content"></textarea>
+      <button class="btn" type="submit">Comment</button>
+    </form>
   </section>
 
   @if (errorMessage()) {
