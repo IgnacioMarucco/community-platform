@@ -1,0 +1,46 @@
+.btn-shared {
+  font-family: var(--cp-font-pixel);
+  border: 2px solid var(--cp-border);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-shared.variant-primary {
+  background: var(--cp-accent);
+  color: var(--cp-bg);
+}
+
+.btn-shared.variant-secondary {
+  background: var(--cp-accent-soft);
+  color: var(--cp-text);
+}
+
+.btn-shared.variant-danger {
+  background: #d63b3b;
+  color: #fff;
+}
+
+.btn-shared.size-sm {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+.btn-shared.size-md {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.btn-shared.size-lg {
+  font-size: 14px;
+  padding: 10px 14px;
+}
+
+.btn-shared.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}

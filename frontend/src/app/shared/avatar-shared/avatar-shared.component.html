@@ -1,0 +1,7 @@
+<div class="avatar-shared" [ngClass]="sizeClass">
+  @if (src) {
+    <img [src]="src" [alt]="alt" />
+  } @else {
+    <span class="avatar-placeholder"></span>
+  }
+</div>

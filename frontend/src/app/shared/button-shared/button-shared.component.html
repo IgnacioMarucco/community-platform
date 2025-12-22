@@ -1,0 +1,25 @@
+@if (isLink) {
+  <a
+    [class]="classes"
+    [routerLink]="routerLink"
+    [href]="href"
+    [attr.target]="target"
+    [attr.rel]="rel"
+    [attr.aria-disabled]="disabled"
+    [attr.tabindex]="disabled ? -1 : null"
+  >
+    @if (label) {
+      {{ label }}
+    } @else {
+      <ng-content />
+    }
+  </a>
+} @else {
+  <button [class]="classes" [disabled]="disabled" [attr.type]="type">
+    @if (label) {
+      {{ label }}
+    } @else {
+      <ng-content />
+    }
+  </button>
+}

@@ -1,0 +1,33 @@
+.tabs-shared {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tab-link {
+  text-decoration: none;
+  color: var(--cp-text);
+  border: 2px solid transparent;
+  font-family: var(--cp-font-pixel);
+}
+
+.tab-link.active {
+  border-color: var(--cp-accent);
+  background: var(--cp-accent);
+  color: var(--cp-bg);
+}
+
+.tabs-sm .tab-link {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.tabs-md .tab-link {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.tabs-lg .tab-link {
+  font-size: 14px;
+  padding: 8px 12px;
+}
