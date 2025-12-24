@@ -57,13 +57,26 @@
 
 .media-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
 }
 
 .media-grid img {
   width: 100%;
   border: 2px solid var(--cp-border);
+  box-shadow: 3px 3px 0 0 var(--cp-border);
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+  max-height: 260px;
+}
+
+.media-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.media-grid.single img {
+  aspect-ratio: 16 / 9;
+  max-height: 420px;
 }
 
 .post-footer {

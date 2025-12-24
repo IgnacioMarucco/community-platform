@@ -13,7 +13,10 @@
       <textarea rows="4" formControlName="content" placeholder="Share something..."></textarea>
 
       <div class="composer-actions">
-        <input type="file" multiple (change)="onFileChange($event)" />
+        <label class="file-upload">
+          <input type="file" multiple (change)="onFileChange($event)" />
+          <span>Choose files</span>
+        </label>
         <button-shared size="md" type="submit" [disabled]="loading()" label="Post" />
       </div>
 
